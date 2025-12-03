@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Check for -r flag (run only, skip build)
+RUN_ONLY=false
+if [ "$1" = "-r" ]; then
+    RUN_ONLY=true
+fi
+
 # Directory containing JavaFX JAR files and native libraries
 JAVAFX_DIR="./lib/javafx"
 
@@ -9,6 +15,28 @@ MAIN_FILE="./main.java"
 
 # The directory to output compiled classes
 BIN_DIR="./bin"
+
+# Function to run the application
+run_application() {
+    echo "Running the application..."
+    java --module-path "$JAVAFX_DIR" \
+         --add-modules javafx.controls,javafx.fxml \
+         --enable-native-access=javafx.graphics \
+         -Djava.library.path="$JAVAFX_DIR" \
+         -cp "$BIN_DIR:.:$SRC_DIR" \
+         main
+}
+
+# If -r flag is set, skip build and just run
+if [ "$RUN_ONLY" = true ]; then
+    # Check if bin directory exists and has compiled classes
+    if [ ! -d "$BIN_DIR" ] || [ -z "$(find "$BIN_DIR" -name "*.class" 2>/dev/null | head -1)" ]; then
+        echo "Error: No compiled classes found. Please build first with: ./run.sh"
+        exit 1
+    fi
+    run_application
+    exit 0
+fi
 
 # Check for zip files that haven't been extracted
 echo "Checking for unextracted zip files..."
@@ -49,9 +77,8 @@ else
 fi
 
 # Compile all Java files from src subdirectories and main
-javac -cp "$LIBRARY_PATH" -d "$BIN_DIR" \
-    "$MAIN_FILE" \
-    "$SRC_DIR"/*/*.java
+JAVA_FILES=$(find "$SRC_DIR" -name "*.java")
+javac -cp "$LIBRARY_PATH" -d "$BIN_DIR" "$MAIN_FILE" $JAVA_FILES
 
 if [ $? -ne 0 ]; then
     echo "Build failed!"
@@ -62,10 +89,4 @@ echo "Build successful!"
 echo ""
 
 # Run the application
-echo "Running the application..."
-java --module-path "$JAVAFX_DIR" \
-     --add-modules javafx.controls,javafx.fxml \
-     --enable-native-access=javafx.graphics \
-     -Djava.library.path="$JAVAFX_DIR" \
-     -cp "$BIN_DIR:.:$SRC_DIR" \
-     main
+run_application

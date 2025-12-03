@@ -1,20 +1,19 @@
-package controller;
+package features.welcome;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import model.Model;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
- * Controller class for MVC pattern
+ * Controller for the welcome feature
  * Handles user input and updates the view based on model changes
  */
-public class Controller implements Initializable {
-    private Model model;
+public class WelcomeController implements Initializable {
+    private WelcomeModel model;
     
     @FXML
     private Button clickButton;
@@ -25,7 +24,7 @@ public class Controller implements Initializable {
     /**
      * Initialize the controller with the model
      */
-    public void setModel(Model model) {
+    public void setModel(WelcomeModel model) {
         this.model = model;
         // Bind the label to the model's message property
         messageLabel.textProperty().bind(model.messageProperty());
@@ -48,3 +47,4 @@ public class Controller implements Initializable {
         }
     }
 }
+

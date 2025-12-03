@@ -3,8 +3,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import model.Model;
-import controller.Controller;
+import features.welcome.WelcomeModel;
+import features.welcome.WelcomeController;
 
 /**
  * Main application class following MVC pattern
@@ -14,14 +14,14 @@ public class main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         // Create the Model (business logic and state)
-        Model model = new Model();
+        WelcomeModel model = new WelcomeModel();
         
         // Load the View (FXML)
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("src/view/sample.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("src/features/welcome/welcome.fxml"));
         Parent root = loader.load();
         
         // Get the Controller and connect it to the Model
-        Controller controller = loader.getController();
+        WelcomeController controller = loader.getController();
         controller.setModel(model);
         
         // Set up the stage

@@ -1,17 +1,17 @@
-package model;
+package features.welcome;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 /**
- * Model class for MVC pattern
+ * Model for the welcome feature
  * Holds the application state and business logic
  */
-public class Model {
+public class WelcomeModel {
     private StringProperty message;
     private int clickCount;
     
-    public Model() {
+    public WelcomeModel() {
         this.message = new SimpleStringProperty("");
         this.clickCount = 0;
     }
@@ -60,3 +60,4 @@ public class Model {
         setMessage("");
     }
 }
+
