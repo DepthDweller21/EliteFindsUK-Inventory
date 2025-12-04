@@ -11,11 +11,36 @@ A simple JavaFX application using the Model-View-Controller pattern.
 
 ### Run the Application
 
+**On Linux/Mac:**
+
 ```bash
 ./run.sh
 ```
 
+**On Windows:**
+
+```powershell
+# Using PowerShell
+.\run.ps1
+
+# Or using Command Prompt
+run.bat
+```
+
 This will build and run the application. The script checks for unextracted zip files and compiles everything automatically.
+
+**Run without rebuilding:**
+
+```bash
+# Linux/Mac
+./run.sh -r
+
+# Windows PowerShell
+.\run.ps1 -r
+
+# Windows CMD
+run.bat -r
+```
 
 ### Manual Build (if needed)
 
