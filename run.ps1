@@ -19,11 +19,12 @@ $BinDir = ".\bin"
 # Function to run the application
 function Run-Application {
     Write-Host "Running the application..."
+    $classpath = "$BinDir;.;$SrcDir"
     java --module-path "$JavaFxDir" `
          --add-modules javafx.controls,javafx.fxml `
          --enable-native-access=javafx.graphics `
-         -Djava.library.path="$JavaFxDir" `
-         -cp "$BinDir;.;$SrcDir" `
+         "-Djava.library.path=$JavaFxDir" `
+         -cp $classpath `
          main
 }
 
@@ -101,4 +102,3 @@ Write-Host ""
 
 # Run the application
 Run-Application
-

@@ -14,18 +14,18 @@ public class main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         // Create the Model (business logic and state)
-        WelcomeModel model = new WelcomeModel();
+        //WelcomeModel model = new WelcomeModel();
         
         // Load the View (FXML)
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("src/features/welcome/welcome.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("src/features/login/login.fxml"));
         Parent root = loader.load();
         
         // Get the Controller and connect it to the Model
-        WelcomeController controller = loader.getController();
-        controller.setModel(model);
+        //WelcomeController controller = loader.getController();
+        //controller.setModel(model);
         
         // Set up the stage
-        primaryStage.setTitle("MVC JavaFX Application");
+        primaryStage.setTitle("Elite Finds UK Login");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }
