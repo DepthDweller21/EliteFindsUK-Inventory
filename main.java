@@ -5,7 +5,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import features.welcome.WelcomeModel;
 import features.welcome.WelcomeController;
-
+import features.homepage.HomepageController;
 /**
  * Main application class following MVC pattern
  * Initializes Model, View, and Controller and connects them
@@ -17,8 +17,9 @@ public class main extends Application {
         //WelcomeModel model = new WelcomeModel();
         
         // Load the View (FXML)
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("src/features/login/login.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("src/features/homepage/homepage.fxml"));
         Parent root = loader.load();
+        HomepageController controller = loader.getController();
         
         // Get the Controller and connect it to the Model
         //WelcomeController controller = loader.getController();
@@ -27,6 +28,11 @@ public class main extends Application {
         // Set up the stage
         primaryStage.setTitle("Elite Finds UK Login");
         primaryStage.setScene(new Scene(root));
+        primaryStage.setOnCloseRequest(event -> {
+            if (controller != null) {
+                controller.cleanup();
+            }
+        });
         primaryStage.show();
     }
 
