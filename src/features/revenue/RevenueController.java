@@ -2,6 +2,7 @@ package features.revenue;
 
 import features.stock.StockController;
 import features.stock.StockModel;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -62,8 +63,15 @@ public class RevenueController implements Initializable {
             
             Stage stage = (Stage) (contentArea != null ? contentArea.getScene().getWindow() : null);
             if (stage != null) {
-                stage.setScene(new Scene(root));
+                Scene scene = new Scene(root, 1100, 700);
+                stage.setScene(scene);
                 stage.setTitle(title);
+                
+                // Force layout recalculation
+                Platform.runLater(() -> {
+                    stage.sizeToScene();
+                    root.requestLayout();
+                });
             }
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);

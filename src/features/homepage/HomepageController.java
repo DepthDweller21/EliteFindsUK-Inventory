@@ -1,11 +1,13 @@
 package features.homepage;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
@@ -24,6 +26,18 @@ public class HomepageController implements Initializable {
     
     @FXML
     private HBox clockContainer;
+    
+    @FXML
+    private Button stockBtn;
+    
+    @FXML
+    private Button revenueBtn;
+    
+    @FXML
+    private Button archiveBtn;
+    
+    @FXML
+    private Button logsBtn;
     
     private ClockWidget pakistanClock;
     private ClockWidget ukClock;
@@ -54,9 +68,36 @@ public class HomepageController implements Initializable {
         }
     }
     
+    /**
+     * Get the stage from any available node
+     */
+    private Stage getStage() {
+        // Try to get stage from button first (most reliable)
+        if (stockBtn != null && stockBtn.getScene() != null) {
+            return (Stage) stockBtn.getScene().getWindow();
+        }
+        if (revenueBtn != null && revenueBtn.getScene() != null) {
+            return (Stage) revenueBtn.getScene().getWindow();
+        }
+        if (archiveBtn != null && archiveBtn.getScene() != null) {
+            return (Stage) archiveBtn.getScene().getWindow();
+        }
+        if (logsBtn != null && logsBtn.getScene() != null) {
+            return (Stage) logsBtn.getScene().getWindow();
+        }
+        // Fallback to clockContainer
+        if (clockContainer != null && clockContainer.getScene() != null) {
+            return (Stage) clockContainer.getScene().getWindow();
+        }
+        return null;
+    }
+    
     @FXML
     private void handleStockButton() {
         try {
+            // Cleanup clocks before navigating
+            cleanup();
+            
             // Load the stock view
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../stock/stock.fxml"));
             Parent root = loader.load();
@@ -66,18 +107,34 @@ public class HomepageController implements Initializable {
             StockModel model = new StockModel();
             controller.setModel(model);
             
-            // Get the stage and switch scene
-            Stage stage = (Stage) clockContainer.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Stock");
-            
-            // Cleanup on close
-            stage.setOnCloseRequest(event -> {
-                if (controller != null) {
-                    controller.cleanup();
-                }
-            });
+            // Get the stage and switch scene - try multiple methods
+            Stage stage = getStage();
+            if (stage != null) {
+                Scene scene = new Scene(root, 1100, 700);
+                stage.setScene(scene);
+                stage.setTitle("Stock");
+                
+                // Force layout recalculation
+                Platform.runLater(() -> {
+                    stage.sizeToScene();
+                    root.requestLayout();
+                });
+                
+                // Cleanup on close
+                stage.setOnCloseRequest(event -> {
+                    if (controller != null) {
+                        controller.cleanup();
+                    }
+                });
+            } else {
+                throw new RuntimeException("Could not retrieve stage for navigation");
+            }
         } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Navigation Error");
+            alert.setHeaderText(null);
+            alert.setContentText("Failed to navigate to Stock: " + e.getMessage());
+            alert.showAndWait();
             e.printStackTrace();
         }
     }
@@ -110,9 +167,20 @@ public class HomepageController implements Initializable {
             Parent root = loader.load();
             
             // Get the stage and switch scene
-            Stage stage = (Stage) clockContainer.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setTitle(title);
+            Stage stage = getStage();
+            if (stage != null) {
+                Scene scene = new Scene(root, 1100, 700);
+                stage.setScene(scene);
+                stage.setTitle(title);
+                
+                // Force layout recalculation
+                Platform.runLater(() -> {
+                    stage.sizeToScene();
+                    root.requestLayout();
+                });
+            } else {
+                throw new RuntimeException("Could not retrieve stage for navigation");
+            }
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Navigation Error");
@@ -143,12 +211,28 @@ public class HomepageController implements Initializable {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("../login/login.fxml"));
                     Parent root = loader.load();
 
-                    Stage stage = (Stage) clockContainer.getScene().getWindow();
-                    stage.setScene(new Scene(root));
-                    stage.setTitle("Elite Finds UK - Login");
-                    stage.setWidth(500);
-                    stage.setHeight(500);
+                    Stage stage = getStage();
+                    if (stage != null) {
+                        Scene scene = new Scene(root, 500, 500);
+                        stage.setScene(scene);
+                        stage.setTitle("Elite Finds UK - Login");
+                        stage.setWidth(500);
+                        stage.setHeight(500);
+                        
+                        // Force layout recalculation
+                        Platform.runLater(() -> {
+                            stage.sizeToScene();
+                            root.requestLayout();
+                        });
+                    } else {
+                        throw new RuntimeException("Could not retrieve stage for navigation");
+                    }
                 } catch (Exception e) {
+                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                    errorAlert.setTitle("Navigation Error");
+                    errorAlert.setHeaderText(null);
+                    errorAlert.setContentText("Failed to logout: " + e.getMessage());
+                    errorAlert.showAndWait();
                     e.printStackTrace();
                 }
             }

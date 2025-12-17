@@ -59,7 +59,7 @@
                 <TableColumn fx:id="actionTypeColumn" prefWidth="120.0" text="Action Type" />
                 <TableColumn fx:id="entityColumn" prefWidth="100.0" text="Entity" />
                 <TableColumn fx:id="detailsColumn" prefWidth="300.0" text="Details" />
-                <TableColumn fx:id="statusColumn" prefWidth="80.0" text="Status" />
+                <TableColumn fx:id="statusColumn" minWidth="80.0" prefWidth="80.0" text="Status" />
               </columns>
             </TableView>
 

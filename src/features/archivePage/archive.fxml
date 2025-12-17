@@ -62,7 +62,7 @@
                 <TableColumn fx:id="brandColumn" prefWidth="100.0" text="Brand" />
                 <TableColumn fx:id="baseCostColumn" prefWidth="120.0" text="Base Cost (PKR)" />
                 <TableColumn fx:id="dateArchivedColumn" prefWidth="120.0" text="Date Archived" />
-                <TableColumn fx:id="archivedByColumn" prefWidth="100.0" text="Archived By" />
+                <TableColumn fx:id="archivedByColumn" minWidth="100.0" prefWidth="100.0" text="Archived By" />
               </columns>
             </TableView>
 

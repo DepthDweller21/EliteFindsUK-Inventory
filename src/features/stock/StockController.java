@@ -1,5 +1,6 @@
 package features.stock;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -694,8 +695,23 @@ public class StockController implements Initializable {
                                   (addProductBtn != null ? addProductBtn.getScene().getWindow() : null));
             
             if (stage != null) {
-                stage.setScene(new Scene(root));
+                // Determine scene dimensions based on page
+                double width = 1100;
+                double height = 700;
+                if (fxmlPath.contains("homepage.fxml")) {
+                    width = 1100;
+                    height = 700;
+                }
+                
+                Scene scene = new Scene(root, width, height);
+                stage.setScene(scene);
                 stage.setTitle(title);
+                
+                // Force layout recalculation
+                Platform.runLater(() -> {
+                    stage.sizeToScene();
+                    root.requestLayout();
+                });
             }
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Navigation Error", 

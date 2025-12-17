@@ -16,9 +16,9 @@
       <HBox fx:id="clockContainer" alignment="CENTER" layoutX="290.0" layoutY="160.0" prefWidth="520.0" spacing="60">
       </HBox>
       <Button id="logoutBtn" layoutX="950.0" layoutY="25.0" mnemonicParsing="false" onAction="#handleLogoutButton" text="Logout" AnchorPane.rightAnchor="30" AnchorPane.topAnchor="25" />
-      <Button id="stockBtn" layoutX="268.0" layoutY="430.0" mnemonicParsing="false" onAction="#handleStockButton" text="Stock" />
-      <Button id="revenueBtn" layoutX="480.0" layoutY="430.0" mnemonicParsing="false" onAction="#handleRevenueButton" text="Revenue" />
-      <Button id="archiveBtn" layoutX="374.0" layoutY="539.0" mnemonicParsing="false" onAction="#handleArchiveButton" text="Archive" />
-      <Button id="logsBtn" layoutX="586.0" layoutY="539.0" mnemonicParsing="false" onAction="#handleLogsButton" text="Logs" />
+      <Button id="stockBtn" layoutX="331.0" layoutY="430.0" mnemonicParsing="false" onAction="#handleStockButton" prefHeight="60.0" prefWidth="155.0" text="Stock" />
+      <Button id="revenueBtn" layoutX="604.0" layoutY="430.0" mnemonicParsing="false" onAction="#handleRevenueButton" text="Revenue" />
+      <Button id="archiveBtn" layoutX="331.0" layoutY="539.0" mnemonicParsing="false" onAction="#handleArchiveButton" text="Archive" />
+      <Button id="logsBtn" layoutX="605.0" layoutY="539.0" mnemonicParsing="false" onAction="#handleLogsButton" prefHeight="60.0" prefWidth="164.0" text="Logs" />
    </children>
 </AnchorPane>

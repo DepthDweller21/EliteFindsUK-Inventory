@@ -66,7 +66,7 @@
                 <TableColumn fx:id="platformFeePercentColumn" prefWidth="90.0" text="Fee %" />
                 <TableColumn fx:id="platformFeeAmountColumn" prefWidth="100.0" text="Fee Amount" />
                 <TableColumn fx:id="netProfitColumn" prefWidth="100.0" text="Net Profit (GBP)" />
-                <TableColumn fx:id="profitMarginColumn" prefWidth="90.0" text="Margin %" />
+                <TableColumn fx:id="profitMarginColumn" minWidth="90.0" prefWidth="90.0" text="Margin %" />
               </columns>
             </TableView>
 
