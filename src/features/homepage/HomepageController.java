@@ -5,6 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import core.ClockWidget;
@@ -102,5 +104,37 @@ public class HomepageController implements Initializable {
     private void handleRevenueButton() {
         System.out.println("Revenue button clicked");
         // Add navigation logic here
+    }
+    
+    @FXML
+    private void handleLogoutButton() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Logout Confirmation");
+        alert.setHeaderText("Are you sure you want to logout?");
+        alert.setContentText("Click Yes to logout or No to cancel.");
+        
+        ButtonType yesButton = new ButtonType("Yes");
+        ButtonType noButton = new ButtonType("No");
+        alert.getButtonTypes().setAll(yesButton, noButton);
+        
+        alert.showAndWait().ifPresent(response -> {
+            if (response == yesButton) {
+                try {
+                    // Cleanup clocks before navigating
+                    cleanup();
+
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("../login/login.fxml"));
+                    Parent root = loader.load();
+
+                    Stage stage = (Stage) clockContainer.getScene().getWindow();
+                    stage.setScene(new Scene(root));
+                    stage.setTitle("Elite Finds UK - Login");
+                    stage.setWidth(500);
+                    stage.setHeight(500);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }

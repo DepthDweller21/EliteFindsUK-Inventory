@@ -103,7 +103,6 @@
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 6, 0, 0, 2);
 }
 
-/* Danger Button (Delete) */
 .action-btn-danger {
     -fx-background-color: linear-gradient(to bottom, #f56565, #e53e3e);
     -fx-text-fill: white;

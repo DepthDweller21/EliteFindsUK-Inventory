@@ -8,16 +8,16 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane id="bgLogin" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="500.0" minWidth="500.0" prefHeight="500.0" prefWidth="500.0" stylesheets="@login.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane id="bgLogin" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="500.0" minWidth="500.0" prefHeight="500.0" prefWidth="500.0" stylesheets="@login.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="features.login.LoginController">
    <children>
       <ImageView id="loginLogo" fitHeight="114.0" fitWidth="272.0" layoutX="114.0" layoutY="30.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@6d521262-83dd-4cb4-ab11-a9962667551b_removalai_preview.png" />
          </image>
       </ImageView>
-      <Button id="loginBtn" layoutX="189.0" layoutY="366.0" mnemonicParsing="false" text="Login" />
-      <TextField id="userName" layoutX="128.0" layoutY="188.0" prefHeight="26.0" prefWidth="250.0" />
-      <PasswordField id="pwd" layoutX="128.0" layoutY="280.0" prefHeight="26.0" prefWidth="250.0" />
+      <Button fx:id="loginBtn" id="loginBtn" layoutX="189.0" layoutY="366.0" mnemonicParsing="false" onAction="#handleLogin" text="Login" />
+      <TextField fx:id="userName" id="userName" layoutX="128.0" layoutY="188.0" prefHeight="26.0" prefWidth="250.0" />
+      <PasswordField fx:id="pwd" id="pwd" layoutX="128.0" layoutY="280.0" prefHeight="26.0" prefWidth="250.0" />
       <Label id="userNamelbl" layoutX="128.0" layoutY="156.0" text="Username" />
       <Label id="pwdlbl" layoutX="128.0" layoutY="250.0" text="Password" />
    </children>
