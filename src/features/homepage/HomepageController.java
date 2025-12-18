@@ -12,6 +12,14 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import core.ClockWidget;
+import features.revenue.RevenueController;
+import features.revenue.RevenueModel;
+import core.DatabaseAccessHandler;
+import core.NoDatabaseConnectionException;
+import features.logsPage.LogsController;
+import features.logsPage.LogModel;
+import features.revenue.RevenueController;
+import features.revenue.RevenueModel;
 import features.stock.StockController;
 import features.stock.StockModel;
 
@@ -103,9 +111,15 @@ public class HomepageController implements Initializable {
             Parent root = loader.load();
             StockController controller = loader.getController();
             
-            // Create and set the model
-            StockModel model = new StockModel();
-            controller.setModel(model);
+            // Create and set the model (with database access handling)
+            Stage currentStage = getStage();
+            try {
+                StockModel model = new StockModel();
+                controller.setModel(model);
+            } catch (NoDatabaseConnectionException e) {
+                DatabaseAccessHandler.showNoConnectionAlert(currentStage);
+                return;
+            }
             
             // Get the stage and switch scene - try multiple methods
             Stage stage = getStage();
@@ -140,8 +154,8 @@ public class HomepageController implements Initializable {
     }
     
     @FXML
-    private void handleArchiveButton() {
-        navigateToPage("../archivePage/archive.fxml", "Archive");
+    private void handleSettingsButton() {
+        navigateToPage("../settingsPage/settings.fxml", "Settings");
     }
     
     @FXML
@@ -165,6 +179,40 @@ public class HomepageController implements Initializable {
             // Load the new view
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
+            
+            // Special handling for stock page - initialize model
+            if (fxmlPath.contains("stock.fxml")) {
+                StockController controller = loader.getController();
+                try {
+                    StockModel model = new StockModel();
+                    controller.setModel(model);
+                } catch (NoDatabaseConnectionException e) {
+                    DatabaseAccessHandler.showNoConnectionAlert(getStage());
+                    return;
+                }
+            }
+            // Special handling for revenue page - initialize model
+            else if (fxmlPath.contains("revenue.fxml")) {
+                RevenueController controller = loader.getController();
+                try {
+                    RevenueModel revenueModel = new RevenueModel();
+                    controller.setModel(revenueModel);
+                } catch (NoDatabaseConnectionException e) {
+                    DatabaseAccessHandler.showNoConnectionAlert(getStage());
+                    return;
+                }
+            }
+            // Special handling for logs page - initialize model
+            else if (fxmlPath.contains("log.fxml")) {
+                LogsController controller = loader.getController();
+                try {
+                    LogModel logModel = new LogModel();
+                    controller.setModel(logModel);
+                } catch (NoDatabaseConnectionException e) {
+                    DatabaseAccessHandler.showNoConnectionAlert(getStage());
+                    return;
+                }
+            }
             
             // Get the stage and switch scene
             Stage stage = getStage();

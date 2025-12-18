@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1100.0" stylesheets="@settings.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="features.settingsPage.SettingsController">
+   <children>
+      <VBox fx:id="sidebar" prefHeight="700.0" prefWidth="180.0" spacing="10" style="-fx-background-color: #2d3748; -fx-padding: 20;" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0">
+         <children>
+            <Button id="stockBtn" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleStockButton" styleClass="sidebar-btn" text="Stock" />
+            <Button id="revenueBtn" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleRevenueButton" styleClass="sidebar-btn" text="Revenue" />
+            <Button id="settingsBtn" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleSettingsButton" styleClass="sidebar-btn-active" text="Settings" />
+            <Button id="logsBtn" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleLogsButton" styleClass="sidebar-btn" text="Logs" />
+            <Region VBox.vgrow="ALWAYS" />
+            <Button id="mainMenuBtn" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleMainMenuButton" styleClass="sidebar-btn" text="← Main Menu" />
+         </children>
+      </VBox>
+
+      <AnchorPane fx:id="contentArea" layoutX="180.0" prefHeight="700.0" prefWidth="920.0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="180" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+         <children>
+            <Label id="headerLabel" layoutX="30.0" layoutY="25.0" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2d3748;" text="Settings" />
+            
+            <VBox layoutX="30.0" layoutY="80.0" spacing="30" AnchorPane.leftAnchor="30" AnchorPane.rightAnchor="30" AnchorPane.topAnchor="80">
+               <children>
+                  <!-- Database Configuration Section -->
+                  <VBox spacing="15" style="-fx-background-color: #f7fafc; -fx-background-radius: 8; -fx-padding: 20;">
+                     <children>
+                        <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2d3748;" text="Database Configuration" />
+                        <GridPane hgap="15" vgap="15">
+                           <children>
+                              <Label text="Connection String:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                              <TextField fx:id="connectionStringField" prefWidth="600.0" promptText="mongodb+srv://..." GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                              <Button fx:id="testConnectionBtn" onAction="#handleTestConnection" styleClass="action-btn" text="Test Connection" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                           </children>
+                           <columnConstraints>
+                              <ColumnConstraints minWidth="150.0" />
+                              <ColumnConstraints hgrow="ALWAYS" />
+                              <ColumnConstraints />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints />
+                           </rowConstraints>
+                        </GridPane>
+                     </children>
+                  </VBox>
+                  
+                  <!-- Exchange Rate Section -->
+                  <VBox spacing="15" style="-fx-background-color: #f7fafc; -fx-background-radius: 8; -fx-padding: 20;">
+                     <children>
+                        <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2d3748;" text="Exchange Rate" />
+                        <GridPane hgap="15" vgap="15">
+                           <children>
+                              <Label text="GBP to PKR Rate:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                              <TextField fx:id="gbpToPkrRateField" prefWidth="200.0" promptText="350.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                              <Label text="(1 GBP = X PKR)" GridPane.columnIndex="2" GridPane.rowIndex="0" style="-fx-text-fill: #718096;" />
+                           </children>
+                           <columnConstraints>
+                              <ColumnConstraints minWidth="150.0" />
+                              <ColumnConstraints />
+                              <ColumnConstraints />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints />
+                           </rowConstraints>
+                        </GridPane>
+                     </children>
+                  </VBox>
+                  
+                  <!-- Action Buttons -->
+                  <HBox alignment="CENTER_LEFT" spacing="15">
+                     <children>
+                        <Button fx:id="saveBtn" onAction="#handleSave" styleClass="action-btn-success" text="Save Settings" />
+                        <Button fx:id="resetBtn" onAction="#handleReset" styleClass="action-btn" text="Reset to Defaults" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>
+

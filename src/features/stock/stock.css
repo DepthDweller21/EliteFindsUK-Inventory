@@ -218,8 +218,10 @@
 
 #addSkuField, #addNameField, #addSizeField, #addColorField, 
 #addMaterialField, #addBrandField, #addBaseCostField,
+#addQuantityField, #addQuantitySoldField,
 #editSkuField, #editNameField, #editSizeField, #editColorField, 
-#editMaterialField, #editBrandField, #editBaseCostField {
+#editMaterialField, #editBrandField, #editBaseCostField,
+#editQuantityField, #editQuantitySoldField {
     -fx-background-color: white;
     -fx-background-radius: 6px;
     -fx-border-color: #cbd5e0;
@@ -233,24 +235,15 @@
 
 #addSkuField:focused, #addNameField:focused, #addSizeField:focused, 
 #addColorField:focused, #addMaterialField:focused, #addBrandField:focused, 
-#addBaseCostField:focused, #editNameField:focused, #editSizeField:focused, 
+#addBaseCostField:focused, #addQuantityField:focused, #addQuantitySoldField:focused,
+#editNameField:focused, #editSizeField:focused, 
 #editColorField:focused, #editMaterialField:focused, #editBrandField:focused, 
-#editBaseCostField:focused {
+#editBaseCostField:focused, #editQuantityField:focused, #editQuantitySoldField:focused {
     -fx-border-color: #617af7;
     -fx-border-width: 2px;
     -fx-effect: dropshadow(gaussian, rgba(97, 122, 247, 0.2), 6, 0, 0, 2);
 }
 
-#addStatusCombo, #editStatusCombo {
-    -fx-background-color: white;
-    -fx-background-radius: 6px;
-    -fx-border-color: #cbd5e0;
-    -fx-border-width: 1px;
-    -fx-border-radius: 6px;
-    -fx-padding: 6px 10px;
-    -fx-font-size: 13px;
-    -fx-font-family: "Segoe UI", Arial, sans-serif;
-}
 
 
 #totalProductsLabel, #selectedProductLabel, 

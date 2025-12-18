@@ -1,6 +1,8 @@
 package features.stock;
 
+import core.ConfigManager;
 import core.Connection;
+import core.NoDatabaseConnectionException;
 import dev.morphia.Datastore;
 import dev.morphia.query.Query;
 import javafx.collections.FXCollections;
@@ -15,9 +17,13 @@ import java.util.List;
 public class StockModel {
     private Datastore datastore;
     private ObservableList<Product> products;
-    private static final double PKR_TO_GBP_RATE = 350.0; // Fixed exchange rate: 1 GBP = 350 PKR
     
     public StockModel() {
+        // Check if database is connected
+        if (!Connection.getInstance().isConnected()) {
+            throw new NoDatabaseConnectionException();
+        }
+        
         // Get datastore from Connection singleton
         datastore = Connection.getInstance().getDatastore();
         
@@ -51,6 +57,9 @@ public class StockModel {
      * @return true if successful, false otherwise
      */
     public boolean addProduct(Product product) {
+        if (datastore == null) {
+            throw new NoDatabaseConnectionException();
+        }
         try {
             // Check if SKU already exists
             Product existing = datastore.find(Product.class)
@@ -77,6 +86,9 @@ public class StockModel {
      * @return true if successful, false otherwise
      */
     public boolean updateProduct(Product product) {
+        if (datastore == null) {
+            throw new NoDatabaseConnectionException();
+        }
         try {
             datastore.save(product);
             loadProducts(); // Reload to update observable list
@@ -94,6 +106,9 @@ public class StockModel {
      * @return true if successful, false otherwise
      */
     public boolean deleteProduct(String sku) {
+        if (datastore == null) {
+            throw new NoDatabaseConnectionException();
+        }
         try {
             Query<Product> query = datastore.find(Product.class).filter("sku", sku);
             datastore.delete(query);
@@ -149,11 +164,12 @@ public class StockModel {
     }
     
     /**
-     * Calculate total value in GBP using fixed exchange rate
+     * Calculate total value in GBP using exchange rate from config
      * @return Total value in GBP
      */
     public double calculateTotalValueGbp() {
-        return calculateTotalValuePkr() / PKR_TO_GBP_RATE;
+        double exchangeRate = ConfigManager.getGbpToPkrRate();
+        return calculateTotalValuePkr() / exchangeRate;
     }
     
     /**
@@ -173,7 +189,8 @@ public class StockModel {
      * @return Total value in GBP
      */
     public double calculateTotalValueGbp(ObservableList<Product> productList) {
-        return calculateTotalValuePkr(productList) / PKR_TO_GBP_RATE;
+        double exchangeRate = ConfigManager.getGbpToPkrRate();
+        return calculateTotalValuePkr(productList) / exchangeRate;
     }
     
     /**

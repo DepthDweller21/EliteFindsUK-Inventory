@@ -1,5 +1,8 @@
 package features.stock;
 
+import core.DatabaseAccessHandler;
+import core.LoggingService;
+import core.NoDatabaseConnectionException;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -51,7 +54,8 @@ public class StockController implements Initializable {
     @FXML private TableColumn<Product, String> materialColumn;
     @FXML private TableColumn<Product, String> brandColumn;
     @FXML private TableColumn<Product, Double> baseCostColumn;
-    @FXML private TableColumn<Product, String> statusColumn;
+    @FXML private TableColumn<Product, Integer> quantityColumn;
+    @FXML private TableColumn<Product, Integer> quantitySoldColumn;
     @FXML private TableColumn<Product, String> dateColumn;
     
     // Labels
@@ -74,7 +78,8 @@ public class StockController implements Initializable {
     @FXML private TextField addMaterialField;
     @FXML private TextField addBrandField;
     @FXML private TextField addBaseCostField;
-    @FXML private ComboBox<String> addStatusCombo;
+    @FXML private TextField addQuantityField;
+    @FXML private TextField addQuantitySoldField;
     
     // Edit product dialog fields
     @FXML private TextField editSkuField;
@@ -84,7 +89,8 @@ public class StockController implements Initializable {
     @FXML private TextField editMaterialField;
     @FXML private TextField editBrandField;
     @FXML private TextField editBaseCostField;
-    @FXML private ComboBox<String> editStatusCombo;
+    @FXML private TextField editQuantityField;
+    @FXML private TextField editQuantitySoldField;
     
     // Delete dialog
     @FXML private Label deleteProductNameLabel;
@@ -152,9 +158,13 @@ public class StockController implements Initializable {
                 }
             });
         }
-        if (statusColumn != null) {
-            statusColumn.setCellValueFactory(cellData -> 
-                new javafx.beans.property.SimpleStringProperty("")); // Empty since status is omitted
+        if (quantityColumn != null) {
+            quantityColumn.setCellValueFactory(cellData -> 
+                new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getQuantity()));
+        }
+        if (quantitySoldColumn != null) {
+            quantitySoldColumn.setCellValueFactory(cellData -> 
+                new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getQuantitySold()));
         }
         if (dateColumn != null) {
             dateColumn.setCellValueFactory(cellData -> 
@@ -261,6 +271,8 @@ public class StockController implements Initializable {
         if (editMaterialField != null) editMaterialField.setText(selectedProduct.getMaterial() != null ? selectedProduct.getMaterial() : "");
         if (editBrandField != null) editBrandField.setText(selectedProduct.getBrand() != null ? selectedProduct.getBrand() : "");
         if (editBaseCostField != null) editBaseCostField.setText(String.valueOf(selectedProduct.getBaseCostPkr()));
+        if (editQuantityField != null) editQuantityField.setText(String.valueOf(selectedProduct.getQuantity()));
+        if (editQuantitySoldField != null) editQuantitySoldField.setText(String.valueOf(selectedProduct.getQuantitySold()));
         
         if (editProductDialog != null) {
             editProductDialog.setVisible(true);
@@ -390,6 +402,36 @@ public class StockController implements Initializable {
             return;
         }
         
+        // Parse quantity
+        int quantity = 0;
+        if (addQuantityField != null && !addQuantityField.getText().trim().isEmpty()) {
+            try {
+                quantity = Integer.parseInt(addQuantityField.getText().trim());
+                if (quantity < 0) {
+                    showAlert(Alert.AlertType.WARNING, "Validation Error", "Quantity must be a non-negative number");
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                showAlert(Alert.AlertType.WARNING, "Validation Error", "Quantity must be a valid number");
+                return;
+            }
+        }
+        
+        // Parse quantity sold
+        int quantitySold = 0;
+        if (addQuantitySoldField != null && !addQuantitySoldField.getText().trim().isEmpty()) {
+            try {
+                quantitySold = Integer.parseInt(addQuantitySoldField.getText().trim());
+                if (quantitySold < 0) {
+                    showAlert(Alert.AlertType.WARNING, "Validation Error", "Quantity Sold must be a non-negative number");
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                showAlert(Alert.AlertType.WARNING, "Validation Error", "Quantity Sold must be a valid number");
+                return;
+            }
+        }
+        
         // Create new product
         Product product = new Product(
             addSkuField.getText().trim(),
@@ -398,13 +440,25 @@ public class StockController implements Initializable {
             addColorField != null ? addColorField.getText().trim() : "",
             addMaterialField != null ? addMaterialField.getText().trim() : "",
             addBrandField != null ? addBrandField.getText().trim() : "",
-            baseCost
+            baseCost,
+            quantity,
+            quantitySold
         );
         
         // Add product to database
-        boolean success = model.addProduct(product);
+        boolean success;
+        try {
+            success = model.addProduct(product);
+        } catch (NoDatabaseConnectionException e) {
+            DatabaseAccessHandler.showNoConnectionAlert(getStage());
+            return;
+        }
         
         if (success) {
+            // Log the action
+            LoggingService.log("Added", "Stock", "Product", addSkuField.getText().trim(), 
+                "Product " + addSkuField.getText().trim());
+            
             showAlert(Alert.AlertType.INFORMATION, "Success", "Product added successfully");
             updateStatistics();
             if (addProductDialog != null) {
@@ -418,7 +472,8 @@ public class StockController implements Initializable {
             if (addMaterialField != null) addMaterialField.clear();
             if (addBrandField != null) addBrandField.clear();
             if (addBaseCostField != null) addBaseCostField.clear();
-            if (addStatusCombo != null) addStatusCombo.getSelectionModel().clearSelection();
+            if (addQuantityField != null) addQuantityField.clear();
+            if (addQuantitySoldField != null) addQuantitySoldField.clear();
         } else {
             showAlert(Alert.AlertType.ERROR, "Error", "Failed to add product. SKU may already exist.");
         }
@@ -437,7 +492,8 @@ public class StockController implements Initializable {
         if (addMaterialField != null) addMaterialField.clear();
         if (addBrandField != null) addBrandField.clear();
         if (addBaseCostField != null) addBaseCostField.clear();
-        if (addStatusCombo != null) addStatusCombo.getSelectionModel().clearSelection();
+        if (addQuantityField != null) addQuantityField.clear();
+        if (addQuantitySoldField != null) addQuantitySoldField.clear();
     }
     
     // Edit product dialog handlers
@@ -478,6 +534,36 @@ public class StockController implements Initializable {
             return;
         }
         
+        // Parse quantity
+        int quantity = 0;
+        if (editQuantityField != null && !editQuantityField.getText().trim().isEmpty()) {
+            try {
+                quantity = Integer.parseInt(editQuantityField.getText().trim());
+                if (quantity < 0) {
+                    showAlert(Alert.AlertType.WARNING, "Validation Error", "Quantity must be a non-negative number");
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                showAlert(Alert.AlertType.WARNING, "Validation Error", "Quantity must be a valid number");
+                return;
+            }
+        }
+        
+        // Parse quantity sold
+        int quantitySold = 0;
+        if (editQuantitySoldField != null && !editQuantitySoldField.getText().trim().isEmpty()) {
+            try {
+                quantitySold = Integer.parseInt(editQuantitySoldField.getText().trim());
+                if (quantitySold < 0) {
+                    showAlert(Alert.AlertType.WARNING, "Validation Error", "Quantity Sold must be a non-negative number");
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                showAlert(Alert.AlertType.WARNING, "Validation Error", "Quantity Sold must be a valid number");
+                return;
+            }
+        }
+        
         // Update product fields
         selectedProduct.setName(editNameField.getText().trim());
         selectedProduct.setSize(editSizeField != null ? editSizeField.getText().trim() : "");
@@ -485,11 +571,23 @@ public class StockController implements Initializable {
         selectedProduct.setMaterial(editMaterialField != null ? editMaterialField.getText().trim() : "");
         selectedProduct.setBrand(editBrandField != null ? editBrandField.getText().trim() : "");
         selectedProduct.setBaseCostPkr(baseCost);
+        selectedProduct.setQuantity(quantity);
+        selectedProduct.setQuantitySold(quantitySold);
         
         // Update product in database
-        boolean success = model.updateProduct(selectedProduct);
+        boolean success;
+        try {
+            success = model.updateProduct(selectedProduct);
+        } catch (NoDatabaseConnectionException e) {
+            DatabaseAccessHandler.showNoConnectionAlert(getStage());
+            return;
+        }
         
         if (success) {
+            // Log the action
+            LoggingService.log("Edited", "Stock", "Product", selectedProduct.getSku(), 
+                "Product " + selectedProduct.getSku());
+            
             showAlert(Alert.AlertType.INFORMATION, "Success", "Product updated successfully");
             updateStatistics();
             if (productsTable != null) {
@@ -531,9 +629,19 @@ public class StockController implements Initializable {
         }
         
         String sku = selectedProduct.getSku();
-        boolean success = model.deleteProduct(sku);
+        boolean success;
+        try {
+            success = model.deleteProduct(sku);
+        } catch (NoDatabaseConnectionException e) {
+            DatabaseAccessHandler.showNoConnectionAlert(getStage());
+            return;
+        }
         
         if (success) {
+            // Log the action
+            LoggingService.log("Deleted", "Stock", "Product", sku, 
+                "Product " + sku);
+            
             showAlert(Alert.AlertType.INFORMATION, "Success", "Product deleted successfully");
             updateStatistics();
             if (deleteConfirmDialog != null) {
@@ -590,11 +698,11 @@ public class StockController implements Initializable {
                 // Write CSV file
                 try (PrintWriter writer = new PrintWriter(file)) {
                     // Write header
-                    writer.println("SKU,Name,Size,Color,Material,Brand,Base Cost (PKR),Date Added");
+                    writer.println("SKU,Name,Size,Color,Material,Brand,Base Cost (PKR),Quantity,Quantity Sold,Date Added");
                     
                     // Write data
                     for (Product product : model.getProducts()) {
-                        writer.printf("%s,%s,%s,%s,%s,%s,%.2f,%s%n",
+                        writer.printf("%s,%s,%s,%s,%s,%s,%.2f,%d,%d,%s%n",
                             escapeCsvField(product.getSku() != null ? product.getSku() : ""),
                             escapeCsvField(product.getName() != null ? product.getName() : ""),
                             escapeCsvField(product.getSize() != null ? product.getSize() : ""),
@@ -602,6 +710,8 @@ public class StockController implements Initializable {
                             escapeCsvField(product.getMaterial() != null ? product.getMaterial() : ""),
                             escapeCsvField(product.getBrand() != null ? product.getBrand() : ""),
                             product.getBaseCostPkr(),
+                            product.getQuantity(),
+                            product.getQuantitySold(),
                             escapeCsvField(product.getDateAdded() != null ? product.getDateAdded() : "")
                         );
                     }
@@ -657,8 +767,8 @@ public class StockController implements Initializable {
     }
     
     @FXML
-    private void handleArchiveButton() {
-        navigateToPage("../archivePage/archive.fxml", "Archive");
+    private void handleSettingsButton() {
+        navigateToPage("../settingsPage/settings.fxml", "Settings");
     }
     
     @FXML
@@ -669,6 +779,16 @@ public class StockController implements Initializable {
     @FXML
     private void handleMainMenuButton() {
         navigateToPage("../homepage/homepage.fxml", "Home");
+    }
+    
+    /**
+     * Get the current stage
+     */
+    private Stage getStage() {
+        if (contentArea != null && contentArea.getScene() != null) {
+            return (Stage) contentArea.getScene().getWindow();
+        }
+        return null;
     }
     
     /**

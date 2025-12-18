@@ -21,7 +21,9 @@ public class Main extends Application {
         
         // Set up the stage
         primaryStage.setTitle("Elite Finds UK - Login");
-        primaryStage.setScene(new Scene(root));
+        Scene scene = new Scene(root, 500, 500);
+        primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
         primaryStage.setOnCloseRequest(event -> {
             // Close database connection on application shutdown
             Connection.getInstance().close();

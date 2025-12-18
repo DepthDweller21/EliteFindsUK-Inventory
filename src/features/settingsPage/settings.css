@@ -1,0 +1,50 @@
+/* Settings Page Styles */
+
+.sidebar-btn {
+    -fx-background-color: #4a5568;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 12px;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+}
+
+.sidebar-btn:hover {
+    -fx-background-color: #5a6578;
+}
+
+.sidebar-btn-active {
+    -fx-background-color: #4299e1;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 12px;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+}
+
+.action-btn {
+    -fx-background-color: #4299e1;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 10px 20px;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+}
+
+.action-btn:hover {
+    -fx-background-color: #3182ce;
+}
+
+.action-btn-success {
+    -fx-background-color: #48bb78;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 10px 20px;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+}
+
+.action-btn-success:hover {
+    -fx-background-color: #38a169;
+}
+

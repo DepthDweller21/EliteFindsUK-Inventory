@@ -38,6 +38,12 @@ public class Product {
     @Property("baseCostPkr")
     private double baseCostPkr;
     
+    @Property("quantity")
+    private int quantity;
+    
+    @Property("quantitySold")
+    private int quantitySold;
+    
     @Property("dateAdded")
     private String dateAdded;
     
@@ -51,7 +57,8 @@ public class Product {
      * Constructor with all fields
      */
     public Product(String sku, String name, String size, String color, 
-                   String material, String brand, double baseCostPkr, String dateAdded) {
+                   String material, String brand, double baseCostPkr, 
+                   int quantity, int quantitySold, String dateAdded) {
         this.sku = sku;
         this.name = name;
         this.size = size;
@@ -59,6 +66,8 @@ public class Product {
         this.material = material;
         this.brand = brand;
         this.baseCostPkr = baseCostPkr;
+        this.quantity = quantity;
+        this.quantitySold = quantitySold;
         this.dateAdded = dateAdded;
     }
     
@@ -66,8 +75,9 @@ public class Product {
      * Constructor that sets dateAdded to current date
      */
     public Product(String sku, String name, String size, String color, 
-                   String material, String brand, double baseCostPkr) {
-        this(sku, name, size, color, material, brand, baseCostPkr, 
+                   String material, String brand, double baseCostPkr, 
+                   int quantity, int quantitySold) {
+        this(sku, name, size, color, material, brand, baseCostPkr, quantity, quantitySold,
              LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE));
     }
     
@@ -144,6 +154,22 @@ public class Product {
         this.dateAdded = dateAdded;
     }
     
+    public int getQuantity() {
+        return quantity;
+    }
+    
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+    
+    public int getQuantitySold() {
+        return quantitySold;
+    }
+    
+    public void setQuantitySold(int quantitySold) {
+        this.quantitySold = quantitySold;
+    }
+    
     @Override
     public String toString() {
         return "Product{" +
@@ -154,4 +180,5 @@ public class Product {
                 '}';
     }
 }
+
 

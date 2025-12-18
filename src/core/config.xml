@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<config>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><config>
     <connectionString>mongodb+srv://hhanif704:hhfhkhhq@cluster0.ljfa4.mongodb.net/</connectionString>
+    <gbpToPkrRate>350.0</gbpToPkrRate>
+    <platformFees>15,20,25</platformFees>
 </config>
-

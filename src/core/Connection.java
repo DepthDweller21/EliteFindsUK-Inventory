@@ -5,11 +5,6 @@ import com.mongodb.client.MongoClients;
 import dev.morphia.Datastore;
 import dev.morphia.Morphia;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import java.nio.file.Paths;
 
 /**
  * Centralized database connection manager
@@ -43,40 +38,56 @@ public class Connection {
     
     /**
      * Initialize MongoDB connection from XML config file
+     * Gracefully handles missing connection string by setting datastore to null
      */
     private void initializeConnection() {
-        String connectionString;
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(Paths.get("src/core/config.xml").toFile());
-            doc.getDocumentElement().normalize();
-            
-            NodeList nodeList = doc.getElementsByTagName("connectionString");
-            if (nodeList.getLength() > 0) {
-                connectionString = nodeList.item(0).getTextContent().trim();
-            } else {
-                System.err.println("Error: connectionString element not found in config.xml");
-                throw new RuntimeException("Connection string not found in config.xml");
-            }
-        } catch (Exception e) {
-            System.err.println("Error reading connection string from src/core/config.xml: " + e.getMessage());
-            throw new RuntimeException("Failed to read database configuration", e);
+        String connectionString = ConfigManager.getConnectionString();
+        
+        if (connectionString == null || connectionString.trim().isEmpty()) {
+            System.out.println("Warning: No database connection string configured. Database features will be unavailable.");
+            System.out.println("Please configure the connection string in Settings.");
+            mongoClient = null;
+            datastore = null;
+            return;
         }
         
-        // Create MongoDB client and datastore
-        mongoClient = MongoClients.create(connectionString);
-        datastore = Morphia.createDatastore(mongoClient, databaseName);
+        try {
+            // Create MongoDB client and datastore
+            mongoClient = MongoClients.create(connectionString);
+            datastore = Morphia.createDatastore(mongoClient, databaseName);
 
-        // Map packages containing entity classes
-        // datastore.getMapper().map(Member.class);
-        datastore.ensureIndexes();
-
+            // Map packages containing entity classes
+            // datastore.getMapper().map(Member.class);
+            datastore.ensureIndexes();
+        } catch (Exception e) {
+            System.err.println("Error initializing database connection: " + e.getMessage());
+            e.printStackTrace();
+            mongoClient = null;
+            datastore = null;
+        }
+    }
+    
+    /**
+     * Check if database connection is available
+     * @return true if connected, false otherwise
+     */
+    public boolean isConnected() {
+        return datastore != null && mongoClient != null;
+    }
+    
+    /**
+     * Check connection and throw exception if not connected
+     * @throws NoDatabaseConnectionException if not connected
+     */
+    public void checkConnection() {
+        if (!isConnected()) {
+            throw new NoDatabaseConnectionException();
+        }
     }
     
     /**
      * Get the MongoDB Datastore instance
-     * @return Datastore instance
+     * @return Datastore instance, or null if not connected
      */
     public Datastore getDatastore() {
         return datastore;
@@ -84,7 +95,7 @@ public class Connection {
     
     /**
      * Get the MongoDB Client instance
-     * @return MongoClient instance
+     * @return MongoClient instance, or null if not connected
      */
     public MongoClient getMongoClient() {
         return mongoClient;
@@ -95,7 +106,9 @@ public class Connection {
      * @param entityClass The entity class to register
      */
     public void mapEntity(Class<?> entityClass) {
-        datastore.getMapper().map(entityClass);
+        if (datastore != null) {
+            datastore.getMapper().map(entityClass);
+        }
     }
     
     /**
@@ -103,7 +116,9 @@ public class Connection {
      * @param packageName The package name containing entity classes
      */
     public void mapPackage(String packageName) {
-        datastore.getMapper().mapPackage(packageName);
+        if (datastore != null) {
+            datastore.getMapper().mapPackage(packageName);
+        }
     }
     
     /**
